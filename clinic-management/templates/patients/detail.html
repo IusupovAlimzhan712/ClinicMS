@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ patient['full_name'] }} - ClinicMS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Patient Detail</h1>
+    <a href="{{ url_for('patients_list') }}" class="btn btn-secondary">Back</a>
+</div>
+
+<div class="card">
+    <div class="card-title">{{ patient['full_name'] }}</div>
+    <div class="detail-grid">
+        <div class="detail-item"><label>IC Number</label><p>{{ patient['ic_number'] }}</p></div>
+        <div class="detail-item"><label>Date of Birth</label><p>{{ patient['date_of_birth'] }}</p></div>
+        <div class="detail-item"><label>Gender</label><p>{{ patient['gender']|capitalize }}</p></div>
+        <div class="detail-item"><label>Blood Type</label><p>{{ patient['blood_type'] or 'Unknown' }}</p></div>
+        <div class="detail-item"><label>Phone</label><p>{{ patient['phone'] }}</p></div>
+        <div class="detail-item"><label>Email</label><p>{{ patient['email'] or '-' }}</p></div>
+        <div class="detail-item" style="grid-column:1/-1"><label>Address</label><p>{{ patient['address'] }}</p></div>
+        <div class="detail-item"><label>Emergency Contact</label><p>{{ patient['emergency_contact_name'] or '-' }}</p></div>
+        <div class="detail-item"><label>Emergency Phone</label><p>{{ patient['emergency_contact_phone'] or '-' }}</p></div>
+        <div class="detail-item"><label>PDPA Consent</label>
+            <p>
+                {% if patient['consent_given'] %}
+                <span class="badge badge-completed">Given on {{ patient['consent_date'][:10] if patient['consent_date'] else 'N/A' }}</span>
+                {% else %}
+                <span class="badge badge-cancelled">Not given</span>
+                {% endif %}
+            </p>
+        </div>
+        <div class="detail-item"><label>Registered</label><p>{{ patient['created_at'][:10] }}</p></div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Appointment History</div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Date</th><th>Time</th><th>Doctor</th><th>Reason</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                {% for a in appointments %}
+                <tr>
+                    <td>{{ a['appointment_date'] }}</td>
+                    <td>{{ a['appointment_time'] }}</td>
+                    <td>{{ a['doctor_name'] }}</td>
+                    <td>{{ a['reason'] }}</td>
+                    <td><span class="badge badge-{{ a['status'] }}">{{ a['status']|replace('_',' ')|capitalize }}</span></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="text-align:center;color:#718096;">No appointments found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Audit Log - ClinicMS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Audit Log</h1>
+    <span style="color:#718096;font-size:0.85rem;">Last 200 entries &mdash; Admin only</span>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Table</th>
+                    <th>Record ID</th>
+                    <th>IP Address</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log['id'] }}</td>
+                    <td style="white-space:nowrap;">{{ log['timestamp'] }}</td>
+                    <td>{{ log['username'] or 'system' }}</td>
+                    <td><span class="audit-action">{{ log['action'] }}</span></td>
+                    <td>{{ log['table_name'] }}</td>
+                    <td>{{ log['record_id'] or '-' }}</td>
+                    <td>{{ log['ip_address'] or '-' }}</td>
+                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.8rem;color:#718096;">
+                        {% if log['new_values'] %}{{ log['new_values'] }}{% else %}-{% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" style="text-align:center;color:#718096;">No audit entries.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

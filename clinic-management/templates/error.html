@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} Error - ClinicMS{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-code">{{ code }}</div>
+    <div class="error-msg">{{ message }}</div>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+</div>
+{% endblock %}

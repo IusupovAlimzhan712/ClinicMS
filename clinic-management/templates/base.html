@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline';">
+    <title>{% block title %}Clinic Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% if session.user_id %}
+    <nav class="navbar">
+        <div class="nav-brand">&#x2665; ClinicMS</div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('patients_list') }}">Patients</a></li>
+            <li><a href="{{ url_for('appointments_list') }}">Appointments</a></li>
+            {% if session.role == 'admin' %}
+            <li><a href="{{ url_for('audit_view') }}">Audit Log</a></li>
+            {% endif %}
+        </ul>
+        <div class="nav-user">
+            <span class="role-badge role-{{ session.role }}">{{ session.role }}</span>
+            {{ session.full_name }}
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>Clinic Management System &mdash; CCS6344 Database &amp; Cloud Security</p>
+    </footer>
+</body>
+</html>

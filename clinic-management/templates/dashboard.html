@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - ClinicMS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <span style="color:#718096;font-size:0.9rem;">{{ session.full_name }} &mdash; {{ session.role|capitalize }}</span>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.total_patients }}</div>
+        <div class="stat-label">Total Patients</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-number">{{ stats.today_appointments }}</div>
+        <div class="stat-label">Today's Appointments</div>
+    </div>
+    <div class="stat-card orange">
+        <div class="stat-number">{{ stats.total_appointments }}</div>
+        <div class="stat-label">Total Appointments</div>
+    </div>
+    <div class="stat-card purple">
+        <div class="stat-number">{{ stats.total_doctors }}</div>
+        <div class="stat-label">Doctors</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Quick Actions</div>
+    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        {% if session.role in ('admin','receptionist') %}
+        <a href="{{ url_for('patients_add') }}" class="btn btn-primary">+ Add Patient</a>
+        <a href="{{ url_for('appointments_add') }}" class="btn btn-primary">+ Schedule Appointment</a>
+        {% endif %}
+        <a href="{{ url_for('patients_list') }}" class="btn btn-secondary">View Patients</a>
+        <a href="{{ url_for('appointments_list') }}" class="btn btn-secondary">View Appointments</a>
+        {% if session.role == 'admin' %}
+        <a href="{{ url_for('audit_view') }}" class="btn btn-warning">Audit Log</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if session.role == 'admin' %}
+<div class="card">
+    <div class="card-title">Recent Activity (Audit Log)</div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Table</th>
+                    <th>Record ID</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in recent_audits %}
+                <tr>
+                    <td>{{ log['timestamp'] }}</td>
+                    <td>{{ log['username'] or 'N/A' }}</td>
+                    <td><span class="audit-action">{{ log['action'] }}</span></td>
+                    <td>{{ log['table_name'] }}</td>
+                    <td>{{ log['record_id'] or '-' }}</td>
+                    <td>{{ log['ip_address'] or '-' }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" style="text-align:center;color:#718096;">No activity yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
